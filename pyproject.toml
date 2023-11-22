@@ -1,0 +1,50 @@
+[tool.poetry]
+name = "bkm_sage"
+version = "0.1.0"
+description = "BluekingMonitor Ops Tools Set"
+authors = ["jeremylv <jeremy19921115@gmail.com>"]
+license = "MIT"
+packages = [
+  { include = "bkm_sage" }
+]
+include = [
+  { path = "extend_tools" }
+]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+click = "^8.1.7"
+
+[tool.poetry.dev-dependencies]
+
+
+[tool.poetry.extras]
+toolkit = []
+
+[tool.poetry.scripts]
+bkm-sage = 'bkm_sage.entry:bkm'
+
+[tool.black]
+line-length = 120
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+  # The following are specific to Black, you probably don't want those.
+    \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | _build
+  | buck-out
+  | build
+  | dist
+)/
+'''
+
+[tool.isort]
+profile = "black"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
