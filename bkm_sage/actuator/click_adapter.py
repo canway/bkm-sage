@@ -25,6 +25,8 @@ class ActuatorClickAdapter:
                 default=param_option.default,
                 type=ActionParamTypeClickMapping[param_option.type],
                 help=param_option.help,
+                is_flag=param_option.is_flag,
+                flag_value=param_option.flag_value,
             )(_comm)
         return click.command()(_comm)
 
