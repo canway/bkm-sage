@@ -12,10 +12,11 @@ include = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.10"
+python = ">=3.10,<3.11"
 click = "^8.1.7"
 
 [tool.poetry.dev-dependencies]
+pyinstaller = "^6.2.0"
 
 
 [tool.poetry.extras]
