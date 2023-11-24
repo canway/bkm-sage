@@ -17,7 +17,8 @@ import (
 // Do 组件测试功能入口
 // taskType: 测试的任务类型 原生任务、自定义任务
 // taskName: 测试的任务名
-func Do(cfg, taskType, taskName string) {
+// binary: 现网机器可执行文件 bkmonitorbeat 路径
+func Do(cfg, taskType, taskName, binary string) {
 	var copyPath string
 	if copyPath = utils.GenCopyFilePath(cfg); copyPath == "" {
 		return
@@ -28,7 +29,7 @@ func Do(cfg, taskType, taskName string) {
 		return
 	}
 	color.Green("component task dataid is %+v\n", dataIds)
-	cmd := exec.Command("./bkmonitorbeat", "-c", copyPath)
+	cmd := exec.Command(binary, "-c", copyPath)
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {
 		color.Red("unable to band stdoutPipe: %s\n", err)

@@ -15,8 +15,11 @@ help = """
   bkmonitorbeat-check_task --conf ../etc/bkmonitorbeat.conf --task.type customTask --task.name script_name
   此命令会测试现网 bkmonitorbeat 的自定义采集任务。（注：task.type 此时应该置为 customTask，task.name 的值为自定义采集任务的配置文件中的 name 值）
 """
+binary_help = """
+现网机器 bkmonitorbeat 可执行文件的路径，默认为 './bkmonitorbeat'
+"""
 conf_help = """
-现网机器 bkmonitorbeat 配置文件相对路径
+现网机器 bkmonitorbeat 配置文件相对路径，默认为 '../etc/bkmonitorbeat.conf'
 """
 task_type_help = """
 测试类型
@@ -33,7 +36,7 @@ def check_task(context: ActuatorContext):
     for k, v in context.params.items():
         if v is not None:
             args.extend([f"--{str(k).replace('_','.')}", str(v)])
-    cmd = (f"sh ./extend_tools/bkmonitorbeat_tools bkmonitorbeat-check_task {' '.join(args)}",)
+    cmd = (f"./extend_tools/bkmonitorbeat_tool bkmonitorbeat-check_task {' '.join(args)}",)
     process = subprocess.Popen(cmd, shell=True, env={**dict(os.environ)})
     process.wait()
     exit_code = process.returncode
@@ -46,6 +49,7 @@ registry.new_proxy_actuator(
         name="bkmonitorbeat-check_task",
         help=help,
         params=[
+            registry.with_param(name="binary", type="string", default="./bkmonitorbeat", help=binary_help),
             registry.with_param(name="conf", type="string", default="../etc/bkmonitorbeat.conf", help=conf_help),
             registry.with_param(name="task_type", type="string", default="nativeTask", help=task_type_help),
             registry.with_param(name="task_name", type="string", default="", help=task_name_help),

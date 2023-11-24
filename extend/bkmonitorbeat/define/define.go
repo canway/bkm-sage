@@ -10,18 +10,21 @@ const (
 
 	PidFileName = "bkmonitorbeat.pid" // pid file name
 
+	CmdKeyBinary     = "binary"
 	CmdKeyConf       = "conf"
 	CmdKeyFilter     = "filter"
 	CmdKeyFilterType = "filter.type"
 	CmdKeyTaskType   = "task.type"
 	CmdKeyTaskName   = "task.name"
 
+	CmdKeyBinaryDefault  = "./bkmonitorbeat"
 	CmdConfDefault       = "../etc/bkmonitorbeat.conf"
 	CmdFilterDefault     = "ERROR"
 	CmdFilterTypeDefault = "or"
 	CmdTaskTypeDefault   = "nativeTask"
 	CmdTaskNameDefault   = ""
 
+	CmdBinaryUsage     = `现网机器可执行文件 bkmonitorbeat 路径`
 	CmdConfUsage       = `现网机器 bkmonitorbeat 配置文件相对路径`
 	CmdFilterUsage     = `用于过滤现网 bkmonitorbeat 日志的 key，支持多个用','进行分割，严格区分大小写`
 	CmdFilterTypeUsage = `过滤类型，可选值为 and、or、not、close，分别代表与 或 非 以及 关闭过滤`

@@ -29,7 +29,7 @@ def check_overall(context: ActuatorContext):
     for k, v in context.params.items():
         if v is not None:
             args.extend([f"--{str(k).replace('_','.')}", str(v)])
-    cmd = (f"sh ./extend_tools/bkmonitorbeat_tools bkmonitorbeat-check_overall {' '.join(args)}",)
+    cmd = (f"./extend_tools/bkmonitorbeat_tool bkmonitorbeat-check_overall {' '.join(args)}",)
     process = subprocess.Popen(cmd, shell=True, env={**dict(os.environ)})
     process.wait()
     exit_code = process.returncode

@@ -9,6 +9,7 @@ import (
 )
 
 func init() {
+	checkTaskCmd.Flags().String(define.CmdKeyBinary, define.CmdKeyBinaryDefault, define.CmdBinaryUsage)
 	checkTaskCmd.Flags().String(define.CmdKeyConf, define.CmdConfDefault, define.CmdConfUsage)
 	checkTaskCmd.Flags().String(define.CmdKeyTaskType, define.CmdTaskTypeDefault, define.CmdTaskTypeUsage)
 	checkTaskCmd.Flags().String(define.CmdKeyTaskName, define.CmdTaskNameDefault, define.CmdTaskNameUsage)
@@ -34,6 +35,11 @@ var checkTaskCmd = &cobra.Command{
 	Short: short,
 	Long:  long,
 	Run: func(cmd *cobra.Command, args []string) {
+		binary, err := cmd.Flags().GetString(define.CmdKeyBinary)
+		if err != nil {
+			fmt.Printf("unable to get param binary, error: %s\n", err)
+			return
+		}
 		checkConf, err := cmd.Flags().GetString(define.CmdKeyConf)
 		if err != nil {
 			fmt.Printf("unable to get param conf, error: %s\n", err)
@@ -51,6 +57,6 @@ var checkTaskCmd = &cobra.Command{
 		}
 		fmt.Println(checkConf, taskType, taskName)
 		// 执行组件测试
-		Do(checkConf, taskType, taskName)
+		Do(checkConf, taskType, taskName, binary)
 	},
 }
