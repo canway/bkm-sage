@@ -21,6 +21,7 @@ import (
 func Do(cfg, taskType, taskName, binary string) {
 	var copyPath string
 	if copyPath = utils.GenCopyFilePath(cfg); copyPath == "" {
+		color.Red("unable to generate copyPath!\n")
 		return
 	}
 	defer releaseResource(copyPath)

@@ -61,10 +61,22 @@ func checkPidProcess(pid string) {
 		color.Red("transform string pid to int32 error:%s \n", err)
 		return
 	}
-	if p, err := process.NewProcess(int32(pid32)); err == nil {
-		if _, err := p.IsRunning(); err == nil {
-			color.Green("bkmonitorbeat process status is ok!")
-		}
+	p, err := process.NewProcess(int32(pid32))
+	if err != nil {
+		color.Red("unable to newProcess, pid: %+v, error: %s\n", pid32, err)
+		return
+	}
+	running, err := p.IsRunning()
+	if err != nil {
+		color.Red("unable to check process is running! error: %s\n", err)
+		return
+	}
+	if running {
+		color.Green("bkmonitorbeat process status is ok!")
+		return
+	} else {
+		color.Yellow("bkmonitorbeat process may not running!")
+		return
 	}
 }
 

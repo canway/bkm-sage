@@ -6,14 +6,16 @@ from bkm_sage.actuator import ActuatorContext, registry
 
 help = """
 
-该指令将会生成配置文件副本并且拉起现网 bkmonitorbeat 进程进行采集任务检测。
+运行 bkmonitorbeat-check_task 指令将会生成配置文件副本并且拉起现网 bkmonitorbeat 可执行二进制文件进行采集任务检测。
 
 使用命令：
-  bkmonitorbeat-check_task --conf ../etc/bkmonitorbeat.conf --task.type nativeTask --task.name basereport_task
-  此命令会测试现网的 bkmonitorbeat 的原生采集任务 basereport。（注：检测原生采集任务 task.type 需要置为 nativeTask）
+  bkmonitorbeat-check_task --binary /usr/local/gse/plugings/bin/bkmonitorbeat --conf /usr/local/gse/plugings/etc/bkmonitorbeat.conf --task.type nativeTask --task.name basereport_task
+  此命令指定了现网的可执行的 bkmonitorbeat 二进制文件以及现网配置文件，并且指定测试的任务类型为 bkmonitorbeat 原生任务测试类型（写在bkmonitorbeat.conf中的任务即为原生任务），并且指定测试任务名为 basereport_task
+  （注：检测原生采集任务 task.type 需要置为 nativeTask）
 
-  bkmonitorbeat-check_task --conf ../etc/bkmonitorbeat.conf --task.type customTask --task.name script_name
-  此命令会测试现网 bkmonitorbeat 的自定义采集任务。（注：task.type 此时应该置为 customTask，task.name 的值为自定义采集任务的配置文件中的 name 值）
+  bkmonitorbeat-check_task  --binary /usr/local/gse/plugings/bin/bkmonitorbeat --conf /usr/local/gse/plugings/etc/bkmonitorbeat.conf --task.type customTask --task.name test_task
+  大致内容同上，此命令指定了可执行文件位置以及配置文件位置，并且额外指明测试任务类型为自定义任务类型（自定义任务类型为配置文件下发在 bkmonitorbeat 配置文件夹中的任务），并且指明自定义任务名为 test_task
+  (注：自定义任务名为下发在 bkmonitorbeat 子配置文件夹中的 具体的配置文件内部的 name 字段的值)
 """
 binary_help = """
 现网机器 bkmonitorbeat 可执行文件的路径，默认为 './bkmonitorbeat'
