@@ -28,3 +28,6 @@ _test
 # build
 build
 dist
+
+# idea
+.idea

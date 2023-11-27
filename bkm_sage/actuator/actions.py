@@ -120,6 +120,8 @@ class ActionParam:
     required: bool = False
     default: any = None
     help: str = ""
+    is_flag: bool = False
+    flag_value: str = ""
 
 
 @dataclass

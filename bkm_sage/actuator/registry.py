@@ -65,7 +65,9 @@ class ActuatorRegistry:
         return option
 
     @classmethod
-    def with_param(cls, name: str, type: str, default: any = None, help: str = "") -> ActionParam:
+    def with_param(
+        cls, name: str, type: str, default: any = None, help: str = "", is_flag: bool = False, flag_value: str = ""
+    ) -> ActionParam:
         return ActionParam(name=name, type=ActionParamType(type), default=default, help=help)
 
     @classmethod

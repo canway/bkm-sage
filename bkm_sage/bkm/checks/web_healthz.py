@@ -8,9 +8,11 @@ from bkm_sage.actuator import ActuatorContext, registry
 def web_healthz(context: ActuatorContext):
     args = []
     for k, v in context.params.items():
+        if v == "False":
+            continue
         if v is not None:
             args.extend([f"-{k}", str(v)])
-    cmd = (f"sh ./extend_tools/example.sh {' '.join(args)}",)
+    cmd = (f"sh ./extend_tools/check_web_healthz.sh {' '.join(args)}",)
     print(f"Exec cmd: {cmd}")
     process = subprocess.Popen(cmd, shell=True, env={**dict(os.environ)})
     process.wait()
@@ -87,10 +89,12 @@ registry.new_proxy_actuator(
         name="web-healthz",
         help=help,
         params=[
-            registry.with_param(name="t", default=False, type="bool", help="检查后尝试自动修复问题"),
-            registry.with_param(name="es", default=False, type="bool", help="运行 elasticsearch 深入检查"),
-            registry.with_param(name="transfer", default=False, type="bool", help="运行 transfer 检查, 注意: 此项检查将耗时1分钟以上"),
-            registry.with_param(name="wild", default=False, type="bool", help="运行 nodeman wild subscription 检查"),
+            registry.with_param(name="t", default="False", type="string", help="检查后尝试自动修复问题"),
+            registry.with_param(name="es", default="False", type="string", help="运行 elasticsearch 深入检查"),
+            registry.with_param(
+                name="transfer", default="False", type="string", help="运行 transfer 检查, 注意: 此项检查将耗时1分钟以上"
+            ),
+            registry.with_param(name="wild", default="False", type="string", help="运行 nodeman wild subscription 检查"),
         ],
         exec=web_healthz,
     )
