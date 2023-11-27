@@ -1,6 +1,8 @@
 # environ file 
 .vscode
 .python-version
+.idea
+.DS_Store
 
 
 # Byte-compiled / optimized Python files
@@ -8,6 +10,7 @@ __pycache__/
 *.pyc
 *.pyo
 *.pyd
+
 
 # Virtual environment
 venv/
