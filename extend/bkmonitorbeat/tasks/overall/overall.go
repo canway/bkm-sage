@@ -16,7 +16,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-func Do(cfg, filter, filterKey string) {
+func Do(cfg, filter, filterKey string, logCount int) {
 	var v *viper.Viper
 	if v = utils.GetViper(cfg, ""); v == nil {
 		return
@@ -42,7 +42,7 @@ func Do(cfg, filter, filterKey string) {
 	// 进行日志检测
 	logDir := v.GetString(define.CfgKeyLogDir)
 	if logDir != "" {
-		checkLog(logDir, filter, filterKey)
+		checkLog(logDir, filter, filterKey, logCount)
 	} else {
 		color.Red("unable to check bkmonitorbeat log file\n")
 	}
@@ -100,7 +100,7 @@ func checkDomainSocket(socketFile string) {
 }
 
 // checkLog 尝试扫描日志文件夹最近的文件的数据
-func checkLog(logDir, filter, filterKey string) {
+func checkLog(logDir, filter, filterKey string, logCount int) {
 	files, err := os.ReadDir(logDir)
 	// 无法读取文件夹的情况
 	if err != nil {
@@ -134,7 +134,7 @@ func checkLog(logDir, filter, filterKey string) {
 	})
 
 	// 仅取最近的三份日志数据
-	for i := 0; i < 3 && i < len(logs); i++ {
+	for i := 0; i < logCount && i < len(logs); i++ {
 		logPath := filepath.Join(logDir, logs[i].Name)
 		utils.ScanLogFile(logPath, filter, filterKey)
 	}

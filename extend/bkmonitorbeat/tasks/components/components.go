@@ -52,7 +52,7 @@ func Do(cfg, taskType, taskName, binary string) {
 		for scanner.Scan() {
 			text := scanner.Text()
 			for _, id := range dataIds {
-				if strings.Contains(text, id) {
+				if strings.Contains(text, fmt.Sprintf(`"dataid":%s`, id)) {
 					fmt.Println(text)
 					matchMap[id] = struct{}{}
 				}
