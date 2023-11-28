@@ -54,19 +54,22 @@ func CreateCfgCopy(cfg, copyPath, taskType, taskName string) ([]string, bool) {
 	var cfgOutPutKeys = "logging.path,path.logs,path.pid,path.data"
 	// 获取源配置文件viper
 	if sourceViper = GetViper(cfg, ""); sourceViper == nil {
+		color.Red("sourceViper is nil\n")
 		return nil, false
 	}
 	// 过滤测试类型不符合预期的情况
 	if taskType != nativeTaskType && taskType != customTaskType {
+		color.Red("task_type does not meet expectations\n")
 		return nil, false
 	}
 	// 创建配置文件空副本
 	if _, err := os.Create(copyPath); err != nil {
-		color.Red("unable to generate copy file: %s, error: %s\n", copyPath, err)
+		color.Red("unable to create copy file: %s, error: %s\n", copyPath, err)
 		return nil, false
 	}
 	// 获取副本配置文件viper
 	if destViper = GetViper(copyPath, ""); destViper == nil {
+		color.Red("destViper is nil\n")
 		return nil, false
 	}
 	// 先获取基础配置
