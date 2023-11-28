@@ -59,9 +59,14 @@ func ScanLogFile(path, filter, filterType string) {
 		color.Red("an error occurred while scanning the file, error: %s\n", err)
 		return
 	}
+	if len(lines) <= 0 {
+		color.Yellow("After filtering the log file, the content is empty!\n")
+		return
+	}
 	for _, line := range lines {
 		fmt.Println(line)
 	}
+
 }
 
 // strFilter 对 content 的内容进行过滤
