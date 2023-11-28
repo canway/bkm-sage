@@ -40,7 +40,6 @@ def check_overall(context: ActuatorContext):
         if v is not None:
             args.extend([f"--{str(k)}", str(v)])
     cmd = (f"./extend_tools/bkmonitorbeat_tool bkmonitorbeat-check_overall {' '.join(args)}",)
-    print(cmd)
     process = subprocess.Popen(cmd, shell=True, env={**dict(os.environ)})
     process.wait()
     exit_code = process.returncode
