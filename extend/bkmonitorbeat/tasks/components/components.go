@@ -76,6 +76,7 @@ func Do(cfg, taskType, taskName, binary string) {
 func releaseResource(cfg string) {
 	v := utils.GetViper(cfg, "")
 	if v == nil {
+		color.Yellow("copy configuration's viper is nil!, skip the release resource process.\n")
 		return
 	}
 	dataDir := v.GetString("path.data")
@@ -98,4 +99,5 @@ func releaseResource(cfg string) {
 		color.Red("unable to remove config: %s, error: %s\n", cfg, err)
 		return
 	}
+	color.Green("Release resources completed!\n")
 }
