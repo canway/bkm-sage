@@ -24,7 +24,7 @@ class ActuatorClickAdapter:
                 "--{}".format(param_option.name),
                 default=param_option.default,
                 type=ActionParamTypeClickMapping[param_option.type],
-                help=param_option.help,
+                help=f"{'必填' if param_option.required else '选填'}： {param_option.help}",
                 is_flag=param_option.is_flag,
                 flag_value=param_option.flag_value,
             )(_comm)
