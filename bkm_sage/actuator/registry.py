@@ -46,9 +46,14 @@ class ActuatorRegistry:
 
     @classmethod
     def with_option(
-        cls, name: str, help: str = "", params: List[ActionParam] = None, actions: List[ActionOption] = None
+        cls,
+        name: str,
+        help: str = "",
+        short_help: str = "",
+        params: List[ActionParam] = None,
+        actions: List[ActionOption] = None,
     ) -> ActuatorOption:
-        option = ActuatorOption(name=name, help=help)
+        option = ActuatorOption(name=name, help=help, short_help=short_help)
         if params is not None:
             option.params = params
         if actions is not None:
@@ -57,9 +62,14 @@ class ActuatorRegistry:
 
     @classmethod
     def with_proxy_option(
-        cls, name: str, exec: Callable[[ActuatorContext], None], help: str = "", params: List[ActionParam] = None
+        cls,
+        name: str,
+        exec: Callable[[ActuatorContext], None],
+        help: str = "",
+        short_help: str = "",
+        params: List[ActionParam] = None,
     ) -> ProxyActuatorOption:
-        option = ProxyActuatorOption(name=name, help=help, exec=exec)
+        option = ProxyActuatorOption(name=name, help=help, exec=exec, short_help=short_help)
         if params is not None:
             option.params = params
         return option

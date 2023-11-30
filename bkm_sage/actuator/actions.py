@@ -88,6 +88,7 @@ class ActuatorOption:
     timeout: int = None
     info: Dict = None
     params: List["ActionParam"] = field(default_factory=list)
+    short_help: str = ""
 
 
 @dataclass

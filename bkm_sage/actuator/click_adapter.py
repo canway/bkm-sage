@@ -28,7 +28,7 @@ class ActuatorClickAdapter:
                 is_flag=param_option.is_flag,
                 flag_value=param_option.flag_value,
             )(_comm)
-        return click.command()(_comm)
+        return click.command(short_help=self.act.cfg.short_help)(_comm)
 
 
 class ActuatorRegistryClickAdapter:

@@ -67,5 +67,6 @@ registry.new_proxy_actuator(
             registry.with_param(name="s", type="string", help="需要检查的策略 ID"),
         ],
         exec=alarm_strategy_check,
+        short_help="策略告警排障工具",
     )
 )

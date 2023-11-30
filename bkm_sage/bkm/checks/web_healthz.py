@@ -97,5 +97,6 @@ registry.new_proxy_actuator(
             registry.with_param(name="wild", default="False", type="string", help="运行 nodeman wild subscription 检查"),
         ],
         exec=web_healthz,
+        short_help="监控后台组件状态检测工具",
     )
 )
