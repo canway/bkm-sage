@@ -8,10 +8,11 @@ from bkm_sage.actuator import ActuatorContext, registry
 def alarm_strategy_check(context: ActuatorContext):
     args = []
     for k, v in context.params.items():
-        if v == "False":
-            continue
         if v is not None:
-            args.extend([f"-{k}", str(v)])
+            if k == "s":
+                args.extend([f"-{k}", str(v)])
+            else:
+                args.extend([f"--{k}", str(v)])
     cmd = (f"sh ./extend_tools/alarm_strategy_check.sh {' '.join(args)}",)
     print(f"Exec cmd: {cmd}")
     process = subprocess.Popen(cmd, shell=True, env={**dict(os.environ)})
@@ -65,6 +66,10 @@ registry.new_proxy_actuator(
         help=help,
         params=[
             registry.with_param(name="s", type="string", help="需要检查的策略 ID"),
+            registry.with_param(name="from", type="string", help="数据拉取时间范围起始点，不填默认最近五分钟，例子：1653056040"),
+            registry.with_param(name="until", type="string", help="数据拉取时间范围结束点，不填默认最近五分钟，例子：1653056280"),
+            registry.with_param(name="filter", type="string", help="输入过滤数据条件格式： k:v,k1:v1, 暂不支持过滤值中带有逗号的情况"),
+            registry.with_param(name="max", type="int", help="最大显示 detect debug 数据的数量，不填默认显示 10条"),
         ],
         exec=alarm_strategy_check,
         short_help="策略告警排障工具",

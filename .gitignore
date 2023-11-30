@@ -2,7 +2,7 @@
 .vscode
 .python-version
 
-
+.DS_Store
 # Byte-compiled / optimized Python files
 __pycache__/
 *.pyc
