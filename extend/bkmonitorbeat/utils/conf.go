@@ -52,23 +52,53 @@ func CreateCfgCopy(cfg, copyPath, taskType, taskName string) ([]string, bool) {
 	var sourceViper, destViper *viper.Viper
 	var cfgFilterKeys = []string{"_task", "bkmonitorbeat.include", "output.bkpipe"}
 	var cfgOutPutKeys = "logging.path,path.logs,path.pid,path.data"
-	// 获取源配置文件viper
-	if sourceViper = GetViper(cfg, ""); sourceViper == nil {
-		return nil, false
-	}
 	// 过滤测试类型不符合预期的情况
 	if taskType != nativeTaskType && taskType != customTaskType {
+		color.Red("task_type does not meet expectations\n")
 		return nil, false
 	}
-	// 创建配置文件空副本
+	// 获取源配置文件viper
+	if sourceViper = GetViper(cfg, ""); sourceViper == nil {
+		color.Red("sourceViper is nil\n")
+		return nil, false
+	}
+	// 创建配置文件空副本 /usr/local/gse2_paas3_dev/plugins/etc/bkmonitorbeat_copy.conf
 	if _, err := os.Create(copyPath); err != nil {
-		color.Red("unable to generate copy file: %s, error: %s\n", copyPath, err)
+		color.Red("unable to create copy file: %s, error: %s\n", copyPath, err)
 		return nil, false
 	}
 	// 获取副本配置文件viper
 	if destViper = GetViper(copyPath, ""); destViper == nil {
+		color.Red("destViper is nil\n")
 		return nil, false
 	}
+	// 对于 destViper 在退出前需要进行保存，避免后续释放资源的问题
+	defer func() {
+		// 对主配置文件进行保存
+		err := destViper.WriteConfigAs(copyPath + ".yaml")
+		if err != nil {
+			color.Red("Error writing config file: %s", err)
+			return
+		}
+		// 重命名文件为 xxx.conf
+		err = os.Rename(copyPath+".yaml", copyPath)
+		if err != nil {
+			color.Red("rename config file error: %s\n", err)
+			return
+		}
+		// 弥补 Viper 无法仅设置 key 不设置 value 的情况
+		f, err := os.OpenFile(copyPath, os.O_APPEND|os.O_WRONLY, 0666)
+		if err != nil {
+			color.Red("unable to open file")
+			return
+		}
+		defer f.Close()
+		_, err = f.WriteString("output.console:\n")
+		if err != nil {
+			color.Red("unable to write output.console, error:%s\n", err)
+			return
+		}
+	}()
 	// 先获取基础配置
 	for _, key := range sourceViper.AllKeys() {
 		var matched bool
@@ -85,7 +115,6 @@ func CreateCfgCopy(cfg, copyPath, taskType, taskName string) ([]string, bool) {
 			} else {
 				destViper.Set(key, sourceViper.Get(key))
 			}
-
 		}
 	}
 	// 修改日志等级
@@ -157,29 +186,7 @@ func CreateCfgCopy(cfg, copyPath, taskType, taskName string) ([]string, bool) {
 	}
 	// 跟进 dataIds 判断是否正确生成了配置副本
 	if len(dataIds) == 0 {
-		return nil, false
-	}
-	// 对主配置文件进行保存
-	err := destViper.WriteConfigAs(copyPath + ".yaml")
-	if err != nil {
-		color.Red("Error writing config file: %s", err)
-		return nil, false
-	}
-	err = os.Rename(copyPath+".yaml", copyPath)
-	if err != nil {
-		color.Red("rename config file error: %s\n", err)
-		return nil, false
-	}
-	// 弥补 Viper 无法仅设置 key 不设置 value 的情况
-	f, err := os.OpenFile(copyPath, os.O_APPEND|os.O_WRONLY, 0666)
-	if err != nil {
-		color.Red("unable to open file")
-		return nil, false
-	}
-	defer f.Close()
-	_, err = f.WriteString("output.console:\n")
-	if err != nil {
-		color.Red("unable to write output.console, error:%s\n", err)
+		color.Yellow("dataIds is empty!\n")
 		return nil, false
 	}
 	// 对需要捕获的 dataIds 进行去重
