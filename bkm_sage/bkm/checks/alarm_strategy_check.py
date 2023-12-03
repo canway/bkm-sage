@@ -8,10 +8,11 @@ from bkm_sage.actuator import ActuatorContext, registry
 def alarm_strategy_check(context: ActuatorContext):
     args = []
     for k, v in context.params.items():
-        if v == "False":
-            continue
         if v is not None:
-            args.extend([f"-{k}", str(v)])
+            if k == "s":
+                args.extend([f"-{k}", str(v)])
+            else:
+                args.extend([f"--{k}", str(v)])
     cmd = (f"sh ./extend_tools/alarm_strategy_check.sh {' '.join(args)}",)
     print(f"Exec cmd: {cmd}")
     process = subprocess.Popen(cmd, shell=True, env={**dict(os.environ)})
@@ -23,23 +24,6 @@ def alarm_strategy_check(context: ActuatorContext):
 
 
 help = """
-\b
-### 1.1 容器化版本
-```shell
-# 1.找出能执行命令的 pod
-kubectl get pods -n blueking | grep monitor-alarm
-# 2.进入 pod，执行命令，其中 strategy_id 为实际的策略 id
-/app/venv/bin/python manage.py strategy_check -s strategy_id --from=start_time --until=end_time --filter=filter_args 
-```
-### 1.2 二进制版本
-```shell
-# 1.进入监控后台
-ssh $BK_MONITORV3_MONITOR_IP
-workon bkmonitorv3-monitor
-# 2.执行命令
-./bin/manage.sh strategy_check -s strategy_id --from=start_time --until=end_time --filter=filter_args
-```
-
 \b
 返回数据分为以下几类：
     - Basic info on strategy
@@ -57,6 +41,10 @@ detect pull
     - 检测数据的拉取，数据与 access 输出的相似
 detect handle
     - 检测出的异常点数量，注意的是，在 detect pull 和 detect handle 之间输出的是检测异常点过程中输出的内容
+    
+\b
+Example:
+    ./bkm-sage alarm-strategy-check alarm-strategy-check --s=123 --from=1653056280 --until=1653056280 --filter=bk_host_id:2,bk_cloud_id=0 --max=5
 """
 
 registry.new_proxy_actuator(
@@ -64,8 +52,13 @@ registry.new_proxy_actuator(
         name="alarm-strategy-check",
         help=help,
         params=[
-            registry.with_param(name="s", type="string", help="需要检查的策略 ID"),
+            registry.with_param(name="s", type="string", help="需要检查的策略 ID", required=True),
+            registry.with_param(name="from", type="string", help="数据拉取时间范围起始点，不填默认最近五分钟，例子：1653056040"),
+            registry.with_param(name="until", type="string", help="数据拉取时间范围结束点，不填默认最近五分钟，例子：1653056280"),
+            registry.with_param(name="filter", type="string", help="输入过滤数据条件格式： k:v,k1:v1, 暂不支持过滤值中带有逗号的情况"),
+            registry.with_param(name="max", type="int", help="最大显示 detect debug 数据的数量，不填默认显示 10条"),
         ],
         exec=alarm_strategy_check,
+        short_help="策略告警排障工具",
     )
 )

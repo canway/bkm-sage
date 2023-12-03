@@ -4,7 +4,7 @@
 .idea
 .DS_Store
 
-
+.DS_Store
 # Byte-compiled / optimized Python files
 __pycache__/
 *.pyc

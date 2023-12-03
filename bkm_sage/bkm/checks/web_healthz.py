@@ -8,11 +8,9 @@ from bkm_sage.actuator import ActuatorContext, registry
 def web_healthz(context: ActuatorContext):
     args = []
     for k, v in context.params.items():
-        if v == "False":
-            continue
         if v is not None:
             args.extend([f"-{k}", str(v)])
-    cmd = (f"sh ./extend_tools/check_web_healthz.sh {' '.join(args)}",)
+    cmd = (f"sh ./extend_tools/web_healthz.sh {' '.join(args)}",)
     print(f"Exec cmd: {cmd}")
     process = subprocess.Popen(cmd, shell=True, env={**dict(os.environ)})
     process.wait()
@@ -23,25 +21,6 @@ def web_healthz(context: ActuatorContext):
 
 
 help = """
-\b
-远程执行(二进制环境）
-    > # 连接监控后台服务器
-    > ssh $BK_MONITORV3_MONITOR_IP
-    > # 切换python环境
-    > workon bkmonitorv3-monitor
-    > # 使用工具
-    > cd /data/bkee/bkmonitorv3/monitor
-    > ./bin/manage.sh healthz
-远程执行(容器化环境）
-    # 连接中控机，通过kubectl查找alarm-alert的pod
-    kubectl get pods -n blueking | grep bk-monitor-alarm-alert
-        bk-monitor-alarm-alert-cc4db6cc-85kgc
-        bk-monitor-alarm-alert-worker-58c946699d-hslw9
-    # 进入pod(bk-monitor-alarm-alert)
-    kubectl -n blueking exec bk-monitor-alarm-alert-cc4db6cc-85kgc -it -- bash
-    # 使用工具
-    python manage.py healthz
-
 \b
 将对默认模块进行检查：
     - Mysql Healthz
@@ -82,6 +61,10 @@ Transfer Healthz Check
 Function Healthz Check
     - 检测下发到每台 ping server 机器的Ping目标数量是否超出限制；
     - 检测实时监控topic消息是否堆积；
+    
+\b
+Example:
+    ./bkm-sage web-healthz --t --transfer --wild --es
 """
 
 registry.new_proxy_actuator(
@@ -89,13 +72,12 @@ registry.new_proxy_actuator(
         name="web-healthz",
         help=help,
         params=[
-            registry.with_param(name="t", default="False", type="string", help="检查后尝试自动修复问题"),
-            registry.with_param(name="es", default="False", type="string", help="运行 elasticsearch 深入检查"),
-            registry.with_param(
-                name="transfer", default="False", type="string", help="运行 transfer 检查, 注意: 此项检查将耗时1分钟以上"
-            ),
-            registry.with_param(name="wild", default="False", type="string", help="运行 nodeman wild subscription 检查"),
+            registry.with_param(name="t", type="string", help="检查后尝试自动修复问题"),
+            registry.with_param(name="es", type="string", help="运行 elasticsearch 深入检查"),
+            registry.with_param(name="transfer", type="string", help="运行 transfer 检查, 注意: 此项检查将耗时1分钟以上"),
+            registry.with_param(name="wild", type="string", help="运行 nodeman wild subscription 检查"),
         ],
         exec=web_healthz,
+        short_help="监控后台组件状态检测工具",
     )
 )
