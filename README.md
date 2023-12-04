@@ -1,6 +1,19 @@
 # bkm-sage
 蓝鲸监控运维工具集合，辅助检测服务健康以及问题定位
 
+## 构建工具支持的运行环境（已测试验证）
+
+构建机：Linux master-node 3.10.107-1-tlinux2_kvm_guest-0056 #1 SMP Wed Dec 29 14:35:09 CST 2021 x86_64 x86_64 x86_64 GNU/Linux
+
+|系统版本|测试镜像|是否支持|
+|--|--|--|
+|centos|centos:latest|√|
+|ubuntu|ubuntu:latest|镜像下载报错，未测试通过|
+|debian|debian:latest|√|
+|alpine|alpine:latest|测试失败，提示文件不存在|
+|fedora|fedora:latest|还未测试|
+|archlinux|alpinux:base|还未测试|
+
 ## 配置环境
 
 项目使用 poetry 进行环境管理，默认 python3.10，建议使用 `python venv` 激活独立的虚拟环境

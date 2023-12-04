@@ -63,8 +63,8 @@ Function Healthz Check
     - 检测实时监控topic消息是否堆积；
     
 \b
-Example:
-    ./bkm-sage web-healthz --t --transfer --wild --es
+使用例子:
+    ./bkm-sage web-healthz -t -transfer -wild -es
 """
 
 registry.new_proxy_actuator(
@@ -72,12 +72,12 @@ registry.new_proxy_actuator(
         name="web-healthz",
         help=help,
         params=[
-            registry.with_param(name="t", type="string", help="检查后尝试自动修复问题"),
-            registry.with_param(name="es", type="string", help="运行 elasticsearch 深入检查"),
-            registry.with_param(name="transfer", type="string", help="运行 transfer 检查, 注意: 此项检查将耗时1分钟以上"),
-            registry.with_param(name="wild", type="string", help="运行 nodeman wild subscription 检查"),
+            registry.with_param("-t", type="string", help="检查后尝试自动修复问题"),
+            registry.with_param("-es", type="string", help="运行 elasticsearch 深入检查"),
+            registry.with_param("-transfer", type="string", help="运行 transfer 检查, 注意: 此项检查将耗时1分钟以上"),
+            registry.with_param("-wild", type="string", help="运行 nodeman wild subscription 检查"),
         ],
         exec=web_healthz,
-        short_help="监控后台组件状态检测工具",
+        short_help="对监控后台组件状态进行检测",
     )
 )

@@ -77,13 +77,13 @@ class ActuatorRegistry:
     @classmethod
     def with_param(
         cls,
-        name: str,
-        type: str,
+        *decls: str,
+        type: str = "string",
         default: any = None,
         help: str = "",
         required: bool = False,
     ) -> ActionParam:
-        return ActionParam(name=name, type=ActionParamType(type), default=default, help=help, required=required)
+        return ActionParam(decls=decls, type=ActionParamType(type), default=default, help=help, required=required)
 
     @classmethod
     def with_action(cls, name: str, exec: Callable[[ActionState, ActuatorContext], None]) -> ActionOption:
