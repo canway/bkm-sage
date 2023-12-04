@@ -21,10 +21,11 @@ class ActuatorClickAdapter:
         _comm.__doc__ = self.act.cfg.help
         for param_option in self.act.cfg.params:
             _comm = click.option(
-                "--{}".format(param_option.name),
+                *param_option.decls,
                 default=param_option.default,
+                required=param_option.required,
                 type=ActionParamTypeClickMapping[param_option.type],
-                help=f"{'必填' if param_option.required else '选填'}： {param_option.help}",
+                help=f"{'「必填」' if param_option.required else '「选填」'} {param_option.help}",
                 is_flag=param_option.is_flag,
                 flag_value=param_option.flag_value,
             )(_comm)

@@ -43,8 +43,8 @@ detect handle
     - 检测出的异常点数量，注意的是，在 detect pull 和 detect handle 之间输出的是检测异常点过程中输出的内容
     
 \b
-Example:
-    ./bkm-sage alarm-strategy-check alarm-strategy-check --s=123 --from=1653056280 --until=1653056280 --filter=bk_host_id:2,bk_cloud_id=0 --max=5
+使用例子:
+    ./bkm-sage alarm-strategy-check -s=123 --from=1653056280 --until=1653056280 --filter=bk_host_id:2,bk_cloud_id=0 --max=5
 """
 
 registry.new_proxy_actuator(
@@ -52,13 +52,13 @@ registry.new_proxy_actuator(
         name="alarm-strategy-check",
         help=help,
         params=[
-            registry.with_param(name="s", type="string", help="需要检查的策略 ID", required=True),
-            registry.with_param(name="from", type="string", help="数据拉取时间范围起始点，不填默认最近五分钟，例子：1653056040"),
-            registry.with_param(name="until", type="string", help="数据拉取时间范围结束点，不填默认最近五分钟，例子：1653056280"),
-            registry.with_param(name="filter", type="string", help="输入过滤数据条件格式： k:v,k1:v1, 暂不支持过滤值中带有逗号的情况"),
-            registry.with_param(name="max", type="int", help="最大显示 detect debug 数据的数量，不填默认显示 10条"),
+            registry.with_param("-s", type="string", help="需要检查的策略 ID", required=True),
+            registry.with_param("--from", type="string", help="数据拉取时间范围起始点，不填默认最近五分钟，例子：1653056040"),
+            registry.with_param("--until", type="string", help="数据拉取时间范围结束点，不填默认最近五分钟，例子：1653056280"),
+            registry.with_param("--filter", type="string", help="输入过滤数据条件格式： k:v,k1:v1, 暂不支持过滤值中带有逗号的情况"),
+            registry.with_param("--max", type="int", help="最大显示 detect debug 数据的数量，不填默认显示 10条"),
         ],
         exec=alarm_strategy_check,
-        short_help="策略告警排障工具",
+        short_help="对策略无告警进行检测",
     )
 )

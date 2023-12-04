@@ -8,6 +8,9 @@ from datetime import datetime
 from traceback import print_exc
 from typing import Callable, Dict, List, Optional, Tuple
 
+import click
+from click.parser import split_opt
+
 from bkm_sage.actuator.config import default_config
 from bkm_sage.actuator.exception import SageException
 
@@ -116,13 +119,71 @@ ActionParamTypeFuncMapping = {
 
 @dataclass
 class ActionParam:
-    name: str
+    decls: List[str]
     type: ActionParamType
     required: bool = False
     default: any = None
     help: str = ""
     is_flag: bool = False
-    flag_value: str = ""
+    flag_value: any = None
+
+    @property
+    def name(self):
+        """
+        最终生成参数名称，与 click 包规范保持一致
+
+        "-f", "--foo-bar", the name is foo_bar
+        "-x", the name is x
+        "-f", "--filename", "dest", the name is dest
+        "--CamelCase", the name is camelcase
+        "-f", "-fb", the name is f
+        "--f", "--foo-bar", the name is f
+        "---f", the name is _f
+        """
+        opts = []
+        secondary_opts = []
+        name = None
+        possible_names = []
+
+        for decl in self.decls:
+            if decl.isidentifier():
+                if name is not None:
+                    raise TypeError(f"Name '{name}' defined twice")
+                name = decl
+            else:
+                split_char = ";" if decl[:1] == "/" else "/"
+                if split_char in decl:
+                    first, second = decl.split(split_char, 1)
+                    first = first.rstrip()
+                    if first:
+                        possible_names.append(click.split_opt(first))
+                        opts.append(first)
+                    second = second.lstrip()
+                    if second:
+                        secondary_opts.append(second.lstrip())
+                    if first == second:
+                        raise ValueError(f"Boolean option {decl!r} cannot use the" " same flag for true/false.")
+                else:
+                    possible_names.append(split_opt(decl))
+                    opts.append(decl)
+
+        if name is None and possible_names:
+            possible_names.sort(key=lambda x: -len(x[0]))  # group long options first
+            name = possible_names[0][1].replace("-", "_").lower()
+            if not name.isidentifier():
+                name = None
+
+        if name is None:
+            raise TypeError("Could not determine name for option")
+
+        if not opts and not secondary_opts:
+            raise TypeError(
+                f"No options defined but a name was passed ({name})."
+                " Did you mean to declare an argument instead? Did"
+                f" you mean to pass '--{name}'?"
+            )
+
+        return name
 
 
 @dataclass
@@ -140,7 +201,7 @@ class GenericActuator(metaclass=abc.ABCMeta):
         for param_option in self.cfg.params:
             if param_option.required:
                 if param_option.name not in kwargs:
-                    raise SageException("Parameter({}) is required, must pass".format(param_option.name))
+                    raise SageException("Parameter({}) is required, must pass".format(",".join(param_option.decls)))
             val = kwargs.get(param_option.name, param_option.default)
             if val is not None:
                 val = ActionParamTypeFuncMapping[param_option.type](val)

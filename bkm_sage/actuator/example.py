@@ -35,7 +35,7 @@ registry.new_actuator(
     option=registry.with_option(
         name="example-demo",
         help="这个是普通执行器样例指令",
-        params=[registry.with_param(name="aa", type="int", help="整型的测试参数")],
+        params=[registry.with_param("--aa", type="int", help="整型的测试参数")],
         actions=[
             registry.with_action(
                 name="example-action01",
@@ -54,7 +54,7 @@ registry.new_proxy_actuator(
     option=registry.with_proxy_option(
         name="example-tool",
         help="这个是代理执行器样例指令",
-        params=[registry.with_param(name="aa", type="int", help="整型的测试参数")],
+        params=[registry.with_param("--aa", type="int", help="整型的测试参数")],
         exec=example_tool,
     )
 )
