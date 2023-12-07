@@ -31,7 +31,7 @@ jobs:
     - name: Clone WiKi repo
       run: |
         cd .. && git clone https://github.com/canway/bkm-sage.wiki.git
-        cd bkm-sage && python --version && python dumps.py dumps --docPath=../bk-sage.wiki
+        cd bkm-sage && poetry run python dumps.py dumps --docPath=../bk-sage.wiki
         cd ../bkm-sage.wiki
         git status
         git add .
