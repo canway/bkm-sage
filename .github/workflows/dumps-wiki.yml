@@ -31,11 +31,10 @@ jobs:
     - name: Clone WiKi repo
       run: |
         cd .. && git clone https://github.com/canway/bkm-sage.wiki.git
-        cd bkm-sage && poetry run python dumps.py dumps --docPath=../bk-sage.wiki
+        cd bkm-sage && git status && poetry run python dumps.py dumps --docPath=../bk-sage.wiki
     - name: Commit WiKi Files
       run: |
         cd ../bkm-sage.wiki
-        git status
         if [ -n "$(git status -s)" ];then
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
