@@ -30,9 +30,11 @@ jobs:
       run: poetry install -E toolkit
     - name: Clone WiKi repo
       run: |
-        pwd
-        ls
-        cd ..
-        git clone https://github.com/canway/bkm-sage.wiki.git
-        pwd
+        cd .. && git clone https://github.com/canway/bkm-sage.wiki.git
+        cd bkm-sage && python dumps.py dumps --docPath=../bk-sage.wiki
+        cd ../bkm-sage.wiki
+        git status
+        git add .
+        git commit -m "feat: update wiki files"
+        git push
         
