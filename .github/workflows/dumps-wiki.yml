@@ -26,5 +26,13 @@ jobs:
       uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python-version }}
-    - run: poetry install -E toolkit
-    - run: pwd
+    - name: Install packages
+      run: poetry install -E toolkit
+    - name: Clone WiKi repo
+      run: |
+        pwd
+        ls
+        cd ..
+        git clone https://github.com/canway/bkm-sage.wiki.git
+        pwd
+        
