@@ -117,6 +117,11 @@ make build-toolkit
 make build-bundle
 ```
 
+导出帮助文档至 doc 目录
+```
+make dumps-wiki
+```
+
 bundle 包目录包含入口脚本 bkm-sage 以及其他依赖的脚本资源，可通过 `chmod +x bkm-sage; ./bkm-sage` 查看指令列表
 ```
 dist/bkm_sage_bundle-0.1.0
@@ -124,3 +129,4 @@ dist/bkm_sage_bundle-0.1.0
 └── extend_tools
     └── example.sh
 ```
+
