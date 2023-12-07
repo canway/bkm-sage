@@ -52,7 +52,7 @@ registry.new_proxy_actuator(
         name="alarm-strategy-check",
         help=help,
         params=[
-            registry.with_param("-s", type="string", help="需要检查的策略 ID", required=True),
+            registry.with_param("-s", type="string", help="需要检查的策略ID", required=True),
             registry.with_param("--from", type="string", help="数据拉取时间范围起始点，不填默认最近五分钟，例子：1653056040"),
             registry.with_param("--until", type="string", help="数据拉取时间范围结束点，不填默认最近五分钟，例子：1653056280"),
             registry.with_param("--filter", type="string", help="输入过滤数据条件格式： k:v,k1:v1, 暂不支持过滤值中带有逗号的情况"),
