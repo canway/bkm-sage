@@ -30,13 +30,12 @@ jobs:
       run: poetry install -E toolkit
     - name: Clone WiKi repo
       run: |
-        cd .. && git clone https://github.com/canway/bkm-sage.wiki.git
+        cd .. && git clone https://tuchuan:${{ secrets.ACCESS_TOKEN }}@github.com/canway/bkm-sage.wiki.git
         cd bkm-sage && git status && poetry run python dumps.py dumps --docPath=docs
         mv docs/* ../bkm-sage.wiki/
     - name: Commit WiKi Files
       run: |
         cd ../bkm-sage.wiki
-        sed -n '31p' alarm-strategy-check.md
         if [ -n "$(git status -s)" ];then
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
