@@ -1,0 +1,46 @@
+# This workflow will install Python dependencies, run tests and lint with a variety of Python versions
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
+
+name: Python package
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10.13"]
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Install poetry
+      run: pipx install poetry
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install packages
+      run: poetry install -E toolkit
+    - name: Clone WiKi repo
+      run: |
+        cd .. && git clone https://tuchuan:${{ secrets.ACCESS_TOKEN }}@github.com/canway/bkm-sage.wiki.git
+        cd bkm-sage && git status && poetry run python dumps.py dumps --docPath=docs
+        mv docs/* ../bkm-sage.wiki/
+    - name: Commit WiKi Files
+      run: |
+        cd ../bkm-sage.wiki
+        if [ -n "$(git status -s)" ];then
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add .
+          git commit -m "feat: update wiki files"
+          git push
+        else
+          echo "No changes"
+        fi
+        

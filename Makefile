@@ -38,3 +38,10 @@ pyinstaller-onefile:
 	poetry check
 	poetry run pyinstaller --onefile --name bkm-sage main.py
 	echo "bkm-sage bundle in dist directory"
+
+
+dumps-wiki:
+	@echo "Start to dumps WiKi ..."
+	poetry check
+	poetry run python dumps.py dumps --docPath=docs
+	@echo "Dumps WiKi success."

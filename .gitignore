@@ -31,6 +31,9 @@ _test
 # build
 build
 dist
+docs
 
 # idea
 .idea
+
+test.py
