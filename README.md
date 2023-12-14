@@ -1,18 +1,6 @@
 # bkm-sage
 蓝鲸监控运维工具集合，辅助检测服务健康以及问题定位
 
-## 构建工具支持的运行环境（已测试验证）
-
-构建机：Linux master-node 3.10.107-1-tlinux2_kvm_guest-0056 #1 SMP Wed Dec 29 14:35:09 CST 2021 x86_64 x86_64 x86_64 GNU/Linux
-
-|系统版本|测试镜像|是否支持|
-|--|--|--|
-|centos|centos:latest|√|
-|ubuntu|ubuntu:latest|镜像下载报错，未测试通过|
-|debian|debian:latest|√|
-|alpine|alpine:latest|测试失败，提示文件不存在|
-|fedora|fedora:latest|还未测试|
-|archlinux|alpinux:base|还未测试|
 
 ## 配置环境
 
@@ -130,3 +118,62 @@ dist/bkm_sage_bundle-0.1.0
     └── example.sh
 ```
 
+## 工具跨平台支持情况
+
+工具是使用 (pyinstaller)[https://github.com/pyinstaller/pyinstaller] 方案来编译生成 python 的可执行文件，pyinsataller 会读取用户编写的 python 代码，扫描发现所有依赖包，然后将这些源文件和 python 解释器一起打包成一个文件包或者一个可执行文件。
+
+```
+PyInstaller is tested against Windows, macOS, and GNU/Linux. However, it is not a cross-compiler: to make a Windows app you run PyInstaller in Windows; to make a GNU/Linux app you run it in GNU/Linux, etc. PyInstaller has been used successfully with AIX, Solaris, FreeBSD and OpenBSD, but is not tested against them as part of the continuous integration tests.
+
+Requirements and Tested Platforms
+
+- Python:
+  - 3.8-3.12. Note that Python 3.10.0 contains a bug making it unsupportable by PyInstaller. PyInstaller will also not work with beta releases of Python 3.13.
+
+- Windows (32bit/64bit/ARM64):
+  - PyInstaller should work on Windows 7 or newer, but we only officially support Windows 8+.
+  - Support for Python installed from the Windows store without using virtual environments requires PyInstaller 4.4 or later.
+
+- Linux:
+  - GNU libc based distributions on architectures x86_64, aarch64, i686, ppc64le, s390x.
+  - musl libc based distributions on architectures x86_64, aarch64.
+  - ldd: Console application to print the shared libraries required by each program or shared library. This typically can be found in the distribution-package glibc or libc-bin.
+  - objdump: Console application to display information from object files. This typically can be found in the distribution-package binutils.
+  - objcopy: Console application to copy and translate object files. This typically can be found in the distribution-package binutils, too.
+  - Raspberry Pi users on armv5-armv7 should add piwheels as an extra index url then pip install pyinstaller as usual.
+
+- macOS (x86_64 or arm64):
+  - macOS 10.15 (Catalina) or newer.
+  - Supports building universal2 applications provided that your installation of Python and all your dependencies are also compiled universal2.
+```
+
+PyInstaller 不支持跨平台编译构建，需要用户自行在目标架构建机上编译对应架构下的工具产物（可执行文件）。目前主流的平台组合方案基本都能测试覆盖，部分较为少见架构和系统未测试完全。
+- Windows (32bit/64bit/ARM64)
+- Linux (x86_64/aarch64/i686/ppc64le/s390x * GNUlibc/musllibc)
+- macOS (x86_64/arm64)
+
+那么如何判定构建的工具是否可以在目标平台上执行呢？只要保障构建平台与执行平台一致即可，可以从以下三个维度进行判定
+- 操作系统（window/linux/macOS）是否一致
+- 指令架构是否一致（以 linux 为例，x86_64, aarch64, i686, ppc64le, s390x）
+- 核心C库是否一致（以 linux 为例，有 GNU libc, musl libc）
+
+
+bkm-sage 以 x86_64 GNU/Linux 架构构建机（3.10.107-1-tlinux2_kvm_guest-0056）进行编译，交付工具，使用 docker 验证工具在统一架构平台不同发行商的操作系统下是否可正常执行，测试指令如下
+```
+# 启动不同版本的镜像进行测试
+docker run -v ${PROJECT_ROOT}/dist:/dist -it auchida/centos:latest /bin/bash
+docker run -v ${PROJECT_ROOT}/dist:/dist -it auchida/debian:latest /bin/bash
+docker run -v ${PROJECT_ROOT}/dist:/dist -it auchida/alpine:latest /bin/sh
+
+# 执行挂载的脚本
+cd /dist/bkm_sage_bundle-0.1.0/
+./bkm-sage
+```
+
+以下是测试结果
+
+|操作系统|测试镜像|是否可执行|
+|--|--|--|
+|centos|centos:latest|√|
+|debian|debian:latest|√|
+|alpine|alpine:latest|出现 syntax error 语法报错|
