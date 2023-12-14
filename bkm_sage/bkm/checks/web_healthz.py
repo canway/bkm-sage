@@ -7,10 +7,15 @@ from bkm_sage.actuator import ActuatorContext, registry
 
 def web_healthz(context: ActuatorContext):
     args = []
+    is_kube = False
     for k, v in context.params.items():
-        if v is not None:
-            args.extend([f"-{k}", str(v)])
-    cmd = (f"sh ./extend_tools/web_healthz.sh {' '.join(args)}",)
+        if v is None:
+            continue
+        if k == "kube":
+            is_kube = True
+            continue
+        args.append(f"-{k}")
+    cmd = (f"sh ./extend_tools/web_healthz.sh {'-kube' if is_kube else ''} {' '.join(args)}",)
     print(f"Exec cmd: {cmd}")
     process = subprocess.Popen(cmd, shell=True, env={**dict(os.environ)})
     process.wait()
@@ -72,10 +77,11 @@ registry.new_proxy_actuator(
         name="web-healthz",
         help=help,
         params=[
-            registry.with_param("-t", type="string", help="检查后尝试自动修复问题"),
-            registry.with_param("-es", type="string", help="运行 elasticsearch 深入检查"),
-            registry.with_param("-transfer", type="string", help="运行 transfer 检查, 注意: 此项检查将耗时1分钟以上"),
-            registry.with_param("-wild", type="string", help="运行 nodeman wild subscription 检查"),
+            registry.with_param("-kube", type="string", is_flag=True, flag_value=None, help="是否为 kubernetes 环境"),
+            registry.with_param("-t", type="string", is_flag=True, help="检查后尝试自动修复问题"),
+            registry.with_param("-es", type="string", is_flag=True, help="运行 elasticsearch 深入检查"),
+            registry.with_param("-transfer", type="string", is_flag=True, help="运行 transfer 检查, 注意: 此项检查将耗时1分钟以上"),
+            registry.with_param("-wild", type="string", is_flag=True, help="运行 nodeman wild subscription 检查"),
         ],
         exec=web_healthz,
         short_help="对监控后台组件状态进行检测",

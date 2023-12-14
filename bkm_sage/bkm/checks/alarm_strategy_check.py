@@ -7,13 +7,18 @@ from bkm_sage.actuator import ActuatorContext, registry
 
 def alarm_strategy_check(context: ActuatorContext):
     args = []
+    is_kube = False
     for k, v in context.params.items():
-        if v is not None:
-            if k == "s":
-                args.extend([f"-{k}", str(v)])
-            else:
-                args.extend([f"--{k}", str(v)])
-    cmd = (f"sh ./extend_tools/alarm_strategy_check.sh {' '.join(args)}",)
+        if v is None:
+            continue
+        if k == "kube":
+            is_kube = True
+            continue
+        if k == "s":
+            args.extend([f"-{k}", str(v)])
+        else:
+            args.extend([f"--{k}", str(v)])
+    cmd = (f"sh ./extend_tools/alarm_strategy_check.sh {'-kube' if is_kube else ''} {' '.join(args)}",)
     print(f"Exec cmd: {cmd}")
     process = subprocess.Popen(cmd, shell=True, env={**dict(os.environ)})
     process.wait()
@@ -52,6 +57,7 @@ registry.new_proxy_actuator(
         name="alarm-strategy-check",
         help=help,
         params=[
+            registry.with_param("-kube", type="string", is_flag=True, help="是否为 kubernetes 环境"),
             registry.with_param("-s", type="string", help="需要检查的策略ID", required=True),
             registry.with_param("--from", type="string", help="数据拉取时间范围起始点，不填默认最近五分钟，例子：1653056040"),
             registry.with_param("--until", type="string", help="数据拉取时间范围结束点，不填默认最近五分钟，例子：1653056280"),

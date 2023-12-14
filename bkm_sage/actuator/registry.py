@@ -82,8 +82,18 @@ class ActuatorRegistry:
         default: any = None,
         help: str = "",
         required: bool = False,
+        is_flag: bool = False,
+        flag_value: any = None,
     ) -> ActionParam:
-        return ActionParam(decls=decls, type=ActionParamType(type), default=default, help=help, required=required)
+        return ActionParam(
+            decls=decls,
+            type=ActionParamType(type),
+            default=default,
+            help=help,
+            required=required,
+            is_flag=is_flag,
+            flag_value=flag_value,
+        )
 
     @classmethod
     def with_action(cls, name: str, exec: Callable[[ActionState, ActuatorContext], None]) -> ActionOption:
