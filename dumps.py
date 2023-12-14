@@ -43,7 +43,7 @@ def dump_helper(base_command, docs_dir):
             toc = ""
             for child_command_name, child_command in ctx.command.commands.items():
                 module_name = child_command_name.split("-")[0]
-                toc += f"|{module_name}|[{child_command_name}](./{child_command_name}.md)|{child_command.short_help}|\n"
+                toc += f"|{module_name}|[{child_command_name}](https://github.com/canway/bkm-sage/wiki/{child_command_name})|{child_command.short_help}|\n"
             md_template = md_home_template.format(toc=toc)
             md_file_path = docs_path.joinpath("HOME.md").absolute()
         else:
