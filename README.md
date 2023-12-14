@@ -158,13 +158,22 @@ PyInstaller 不支持跨平台编译构建，需要用户自行在目标架构�
 - 核心C库是否一致（以 linux 为例，有 GNU libc, musl libc）
 
 
-bkm-sage 以 linux-x86_64 架构构建机（Linux master-node 3.10.107-1-tlinux2_kvm_guest-0056）进行编译，交付工具
+bkm-sage 以 x86_64 GNU/Linux 架构构建机（3.10.107-1-tlinux2_kvm_guest-0056）进行编译，交付工具，使用 docker 验证工具在统一架构平台不同发行商的操作系统下是否可正常执行，测试指令如下
+```
+# 启动不同版本的镜像进行测试
+docker run -v ${PROJECT_ROOT}/dist:/dist -it auchida/centos:latest /bin/bash
+docker run -v ${PROJECT_ROOT}/dist:/dist -it auchida/debian:latest /bin/bash
+docker run -v ${PROJECT_ROOT}/dist:/dist -it auchida/alpine:latest /bin/sh
 
-使用 docker 验证工具在统一架构平台不同发行商的操作系统下是否可正常执行
+# 执行挂载的脚本
+cd /dist/bkm_sage_bundle-0.1.0/
+./bkm-sage
+```
+
+以下是测试结果
 
 |操作系统|测试镜像|是否可执行|
 |--|--|--|
 |centos|centos:latest|√|
-|ubuntu|ubuntu:latest|镜像下载报错，未测试通过|
 |debian|debian:latest|√|
-|alpine|alpine:latest|测试失败，提示文件不存在|
+|alpine|alpine:latest|出现 syntax error 语法报错|
