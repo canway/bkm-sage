@@ -71,6 +71,7 @@ is_queue_running() {
         echo "ERROR: Queue ${QUEUE} in ${VHOST} has no consumers"
         return 2
     elif [ "${consumers}" = "" ]; then
+        # 密码或者地址错误
         echo "CRITICAL: Cannot requet the api for ${QUEUE} in ${VHOST}"
         return 1
     else
