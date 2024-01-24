@@ -65,6 +65,7 @@ is_queue_running() {
     set -e
     set -o pipefail
 
+    # 使用 python 去除对 jq 的依赖
     consumers=$(curl --fail -s -u "${USERNAME}:${PASSWORD}" "${SCHEME}://${HOST}:${PORT}/api/queues/${VHOST}/${QUEUE}" | python -c "import json; print(json.loads(input())['consumers'])" 2>/dev/null)
     if [ "${consumers}" = 0 ]; then
         echo "ERROR: Queue ${QUEUE} in ${VHOST} has no consumers"
